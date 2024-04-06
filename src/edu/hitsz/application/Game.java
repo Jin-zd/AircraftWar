@@ -247,26 +247,10 @@ public class Game extends JPanel {
                     if (enemyAircraft.notValid()) {
                         if (enemyAircraft instanceof EliteEnemy ) {
                             int selectNum = new Random().nextInt();
-                            BaseProp prop;
-                            if (selectNum % 3 == 0) {
-                                prop = new HpProp(enemyAircraft.getLocationX(),
-                                        enemyAircraft.getLocationY(),
-                                        0,
-                                        5,
-                                        30);
-                            } else if (selectNum % 3 == 1) {
-                                prop = new PowerProp(enemyAircraft.getLocationX(),
-                                        enemyAircraft.getLocationY(),
-                                        0,
-                                        5,
-                                        20);
-                            } else {
-                                prop = new BombProp(enemyAircraft.getLocationX(),
-                                        enemyAircraft.getLocationY(),
-                                        0,
-                                        5);
+                            BaseProp prop = getBaseProp(enemyAircraft, selectNum);
+                            if (!Objects.isNull(prop)) {
+                                props.add(prop);
                             }
-                            props.add(prop);
                         }
                         score += 10;
                     }
@@ -296,6 +280,29 @@ public class Game extends JPanel {
             }
         }
 
+    }
+
+    private static BaseProp getBaseProp(AbstractAircraft enemyAircraft, int selectNum) {
+        BaseProp prop = null;
+        if (selectNum % 4 == 0) {
+            prop = new HpProp(enemyAircraft.getLocationX(),
+                    enemyAircraft.getLocationY(),
+                    0,
+                    5,
+                    30);
+        } else if (selectNum % 4 == 1) {
+            prop = new PowerProp(enemyAircraft.getLocationX(),
+                    enemyAircraft.getLocationY(),
+                    0,
+                    5,
+                    20); 
+        } else if (selectNum % 4 == 2) {
+            prop = new BombProp(enemyAircraft.getLocationX(),
+                    enemyAircraft.getLocationY(),
+                    0,
+                    5);
+        }
+        return prop;
     }
 
     /**
@@ -352,7 +359,7 @@ public class Game extends JPanel {
     }
 
     private void paintImageWithPositionRevised(Graphics g, List<? extends AbstractFlyingObject> objects) {
-        if (objects.size() == 0) {
+        if (objects.isEmpty()) {
             return;
         }
 
