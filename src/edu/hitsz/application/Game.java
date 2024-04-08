@@ -3,10 +3,7 @@ package edu.hitsz.application;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
-import edu.hitsz.props.BaseProp;
-import edu.hitsz.props.BombProp;
-import edu.hitsz.props.HpProp;
-import edu.hitsz.props.PowerProp;
+import edu.hitsz.props.*;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import javax.swing.*;
@@ -69,10 +66,7 @@ public class Game extends JPanel {
     private boolean gameOverFlag = false;
 
     public Game() {
-        heroAircraft = new HeroAircraft(
-                Main.WINDOW_WIDTH / 2,
-                Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight(),
-                0, 0, 100);
+        heroAircraft = HeroAircraft.getHeroAircraft();
 
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
@@ -109,24 +103,15 @@ public class Game extends JPanel {
                 // 新敌机产生
                 Random r = new Random();
                 int selectNum = r.nextInt();
+                AircraftFactory aircraftFactory;
 
                 if (enemyAircrafts.size() < enemyMaxNumber) {
-                    if (selectNum % 2 == 0) {
-                        enemyAircrafts.add(new MobEnemy(
-                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                                (int) (Math.random() * Main.WINDOW_HEIGHT * 0.05),
-                                0,
-                                5,
-                                30
-                        ));
+                    if (selectNum % 4 == 1) {
+                        aircraftFactory = new EliteEnemyFactory();
+                        enemyAircrafts.add(aircraftFactory.createAircraft());
                     } else {
-                        enemyAircrafts.add(new EliteEnemy(
-                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                                (int) (Math.random() * Main.WINDOW_HEIGHT * 0.05),
-                                5,
-                                5,
-                                60
-                        ));
+                        aircraftFactory = new MobEnemyFactory();
+                        enemyAircrafts.add(aircraftFactory.createAircraft());
                     }
 
                 }
@@ -284,23 +269,16 @@ public class Game extends JPanel {
 
     private static BaseProp getBaseProp(AbstractAircraft enemyAircraft, int selectNum) {
         BaseProp prop = null;
-        if (selectNum % 4 == 0) {
-            prop = new HpProp(enemyAircraft.getLocationX(),
-                    enemyAircraft.getLocationY(),
-                    0,
-                    5,
-                    30);
-        } else if (selectNum % 4 == 1) {
-            prop = new PowerProp(enemyAircraft.getLocationX(),
-                    enemyAircraft.getLocationY(),
-                    0,
-                    5,
-                    20); 
-        } else if (selectNum % 4 == 2) {
-            prop = new BombProp(enemyAircraft.getLocationX(),
-                    enemyAircraft.getLocationY(),
-                    0,
-                    5);
+        PropFactory propFactory;
+        if (selectNum % 10 == 0 || selectNum % 10 == 1 || selectNum % 10 == 2) {
+            propFactory = new HpPropFactory();
+            prop = propFactory.createProp(enemyAircraft.getLocationX(), enemyAircraft.getLocationY());
+        } else if (selectNum % 10 == 3 || selectNum % 10 == 4 || selectNum % 10 == 5) {
+            propFactory = new PowerPropFactory();
+            prop = propFactory.createProp(enemyAircraft.getLocationX(), enemyAircraft.getLocationY());
+        } else if (selectNum % 10 == 6 || selectNum % 10 == 7 || selectNum % 10 == 8) {
+            propFactory = new BombPropFactory();
+            prop = propFactory.createProp(enemyAircraft.getLocationX(), enemyAircraft.getLocationY());
         }
         return prop;
     }

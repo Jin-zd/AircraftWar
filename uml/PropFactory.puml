@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+Abstract class BaseProp {
+    + BaseProp(int locationX, int locationY, int speedX, int speedY)
+}
+
+class BombProp {
+    + BombProp(int locationX, int locationY, int speedX, int speedY)
+}
+
+class HpProp {
+    + HpProp(int locationX, int locationY, int speedX, int speedY, int hpRecover)
+}
+
+class PowerProp {
+    + PowerProp(int locationX, int locationY, int speedX, int speedY, int powerUp)
+}
+
+BaseProp <|-- BombProp
+BaseProp <|-- HpProp
+BaseProp <|-- PowerProp
+
+interface PropFactory {
+    + createProp(int x, int y): BaseProp
+}
+
+class BombPropFactory {
+    + createProp(int x, int y): BaseProp
+}
+
+class HpPropFactory {
+    + createProp(int x, int y): BaseProp
+}
+
+class PowerPropFactory {
+    + createProp(int x, int y): BaseProp
+}
+
+PropFactory <|.. BombPropFactory
+PropFactory <|.. HpPropFactory
+PropFactory <|.. PowerPropFactory
+
+BaseProp <.. PropFactory
+
+@enduml

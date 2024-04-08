@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+Abstract class AbstractAircraft {
+    + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+}
+
+class MobEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+}
+
+class EliteEnemy {
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+}
+
+AbstractAircraft <|-- MobEnemy
+AbstractAircraft <|-- EliteEnemy
+
+interface AircraftFactory {
+    + creatAircraft(): AbstractAircraft
+}
+
+class MobEnemyFactory {
+    + creatAircraft(): AbstractAircraft
+}
+
+class EliteEnemyFactory {
+    + creatAircraft(): AbstractAircraft
+}
+
+AircraftFactory <|.. MobEnemyFactory
+AircraftFactory <|.. EliteEnemyFactory
+
+
+AbstractAircraft <.. AircraftFactory
+@enduml
