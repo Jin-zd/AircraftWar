@@ -1,6 +1,5 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.props.BaseProp;
@@ -10,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class EliteEnemy extends AbstractAircraft {
+public class ElitePlusEnemy extends AbstractAircraft {
 
     private int shootNum;
 
@@ -19,21 +18,11 @@ public class EliteEnemy extends AbstractAircraft {
     private int direction = 1;
 
 
-    public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int shootNum) {
+    public ElitePlusEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int shootNum) {
         super(locationX, locationY, speedX, speedY, hp);
         this.shootNum = shootNum;
     }
 
-    @Override
-    public void forward() {
-        super.forward();
-
-        if (locationY >= Main.WINDOW_HEIGHT) {
-            vanish();
-        }
-    }
-
-    @Override
     public List<BaseProp> getProp() {
         List<BaseProp> prop = new ArrayList<>();
         Random r = new Random();
@@ -42,13 +31,12 @@ public class EliteEnemy extends AbstractAircraft {
         if (oneProp != null) {
             prop.add(oneProp);
         }
-        //prop.add(super.getOneProp(select));
         return prop;
     }
 
     @Override
-    public int getScore(){
-        return 20;
+    public int getScore() {
+        return 30;
     }
 
     @Override
@@ -60,7 +48,10 @@ public class EliteEnemy extends AbstractAircraft {
         int speedY = this.getSpeedY() + direction * 3;
         BaseBullet bullet;
         for (int i = 0; i < shootNum; i++) {
-            bullet = new EnemyBullet(x + (i * 2 - shootNum + 1) * 10, y, speedX, speedY, power);
+            if (i == 0 || i == shootNum - 1) {
+                y = y - direction * 10;
+            }
+            bullet = new EnemyBullet(x + (i * 4 - shootNum + 1) * 10, y, speedX, speedY, power);
             res.add(bullet);
         }
         return res;

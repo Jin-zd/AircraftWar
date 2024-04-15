@@ -3,15 +3,16 @@ package edu.hitsz.aircraft;
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
 
-public class MobEnemyFactory implements AircraftFactory {
+public class BossEnemyFactory implements AircraftFactory{
     @Override
     public AbstractAircraft createAircraft(int shootNum) {
-        return new MobEnemy(
+        return new BossEnemy(
                 (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                (int) (Math.random() * Main.WINDOW_HEIGHT * 0.05),
-                0,
+                100,
                 5,
-                30
+                0,
+                150,
+                shootNum
         );
     }
 }

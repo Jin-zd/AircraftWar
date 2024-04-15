@@ -2,7 +2,9 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.props.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,24 +26,58 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
         this.maxHp = hp;
     }
 
-    public void decreaseHp(int decrease){
+    public void decreaseHp(int decrease) {
         hp -= decrease;
-        if(hp <= 0){
-            hp=0;
+        if (hp <= 0) {
+            hp = 0;
             vanish();
         }
     }
+
+    public List<BaseProp> getProp() {
+        return new ArrayList<>();
+    }
+
+    public int getScore(){
+        return 0;
+    }
+
 
     public int getHp() {
         return hp;
     }
 
+    public BaseProp getOneProp(int selectNum, int count) {
+        BaseProp prop = null;
+        PropFactory propFactory;
+        int X;
+        int Y = super.getLocationY();
+        if (count == 0) {
+            X = super.getLocationX();
+        } else if (count == 1) {
+            X = super.getLocationX() - 40;
+        } else {
+            X = super.getLocationX() + 40;
+        }
+        if (selectNum % 10 == 0 || selectNum % 10 == 1 || selectNum % 10 == 2) {
+            propFactory = new HpPropFactory();
+            prop = propFactory.createProp(X, Y);
+        } else if (selectNum % 10 == 3 || selectNum % 10 == 4 || selectNum % 10 == 5) {
+            propFactory = new PowerPropFactory();
+            prop = propFactory.createProp(X, Y);
+        } else if (selectNum % 10 == 6 || selectNum % 10 == 7 || selectNum % 10 == 8) {
+            propFactory = new BombPropFactory();
+            prop = propFactory.createProp(X, Y);
+        }
+        return prop;
+    }
+
 
     /**
      * 飞机射击方法，可射击对象必须实现
-     * @return
-     *  可射击对象需实现，返回子弹
-     *  非可射击对象空实现，返回null
+     *
+     * @return 可射击对象需实现，返回子弹
+     * 非可射击对象空实现，返回null
      */
     public abstract List<BaseBullet> shoot();
 

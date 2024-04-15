@@ -1,54 +1,46 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.props.BaseProp;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
-public class EliteEnemy extends AbstractAircraft {
-
-    private int shootNum;
+public class BossEnemy extends AbstractAircraft {
+    private final int shootNum;
 
     private int power = 10;
 
     private int direction = 1;
 
 
-    public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int shootNum) {
+    public BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int shootNum) {
         super(locationX, locationY, speedX, speedY, hp);
         this.shootNum = shootNum;
     }
 
-    @Override
-    public void forward() {
-        super.forward();
-
-        if (locationY >= Main.WINDOW_HEIGHT) {
-            vanish();
-        }
-    }
-
-    @Override
     public List<BaseProp> getProp() {
         List<BaseProp> prop = new ArrayList<>();
-        Random r = new Random();
-        int select = r.nextInt();
-        BaseProp oneProp = super.getOneProp(select, 0);
-        if (oneProp != null) {
-            prop.add(oneProp);
+        int count = 0;
+        for (int i = 0; i < 3; i++) {
+            Random r = new Random();
+            int select = r.nextInt();
+            BaseProp oneProp = super.getOneProp(select, count);
+            if (oneProp != null) {
+                prop.add(oneProp);
+                count += 1;
+            }
         }
-        //prop.add(super.getOneProp(select));
         return prop;
     }
 
     @Override
-    public int getScore(){
-        return 20;
+    public int getScore() {
+        return 50;
     }
 
     @Override
@@ -60,7 +52,7 @@ public class EliteEnemy extends AbstractAircraft {
         int speedY = this.getSpeedY() + direction * 3;
         BaseBullet bullet;
         for (int i = 0; i < shootNum; i++) {
-            bullet = new EnemyBullet(x + (i * 2 - shootNum + 1) * 10, y, speedX, speedY, power);
+            bullet = new EnemyBullet((int) (Math.cos(2 * Math.PI * i / 20) * 150 + x), (int) (Math.sin(2 * Math.PI * i / 20) * 150 + y), speedX, speedY, power);
             res.add(bullet);
         }
         return res;

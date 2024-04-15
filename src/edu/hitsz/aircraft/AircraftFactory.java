@@ -1,5 +1,5 @@
 package edu.hitsz.aircraft;
 
 public interface AircraftFactory {
-    AbstractAircraft createAircraft();
+    AbstractAircraft createAircraft(int shootNum);
 }

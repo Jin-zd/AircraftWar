@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.*;
 
 /**
@@ -106,12 +107,19 @@ public class Game extends JPanel {
                 AircraftFactory aircraftFactory;
 
                 if (enemyAircrafts.size() < enemyMaxNumber) {
-                    if (selectNum % 4 == 1) {
+                    if (score % 100 <= 20 && score >= 100 && enemyAircrafts.stream().filter(x -> x instanceof BossEnemy).toList().isEmpty()) {
+                        aircraftFactory = new BossEnemyFactory();
+                        enemyAircrafts.add(aircraftFactory.createAircraft(20));
+                    }
+                    if (selectNum % 5 == 1 || selectNum % 5 == 2) {
                         aircraftFactory = new EliteEnemyFactory();
-                        enemyAircrafts.add(aircraftFactory.createAircraft());
+                        enemyAircrafts.add(aircraftFactory.createAircraft(1));
+                    } else if (selectNum % 5 == 3) {
+                        aircraftFactory = new EliteEnemyFactory();
+                        enemyAircrafts.add(aircraftFactory.createAircraft(3));
                     } else {
                         aircraftFactory = new MobEnemyFactory();
-                        enemyAircrafts.add(aircraftFactory.createAircraft());
+                        enemyAircrafts.add(aircraftFactory.createAircraft(0));
                     }
 
                 }
@@ -168,11 +176,9 @@ public class Game extends JPanel {
     }
 
     private void shootAction() {
-        List<AbstractAircraft> eliteAircrafts = enemyAircrafts.stream().filter(x -> x instanceof EliteEnemy).toList();
-        for (AbstractAircraft eliteAircraft : eliteAircrafts) {
-            enemyBullets.addAll(eliteAircraft.shoot());
+        for (AbstractAircraft enemyAircraft : enemyAircrafts) {
+            enemyBullets.addAll(enemyAircraft.shoot());
         }
-
         // 英雄射击
         heroBullets.addAll(heroAircraft.shoot());
     }
@@ -230,14 +236,11 @@ public class Game extends JPanel {
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
-                        if (enemyAircraft instanceof EliteEnemy ) {
-                            int selectNum = new Random().nextInt();
-                            BaseProp prop = getBaseProp(enemyAircraft, selectNum);
-                            if (!Objects.isNull(prop)) {
-                                props.add(prop);
-                            }
+                        List<BaseProp> prop = enemyAircraft.getProp();
+                        if (!prop.isEmpty()) {
+                            props.addAll(prop);
                         }
-                        score += 10;
+                        score += enemyAircraft.getScore();
                     }
                 }
                 // 英雄机 与 敌机 相撞，均损毁
@@ -248,7 +251,6 @@ public class Game extends JPanel {
             }
         }
 
-        // Todo: 我方获得道具，道具生效
         for (BaseProp prop : props) {
             if (prop.notValid()) {
                 continue;
@@ -265,22 +267,6 @@ public class Game extends JPanel {
             }
         }
 
-    }
-
-    private static BaseProp getBaseProp(AbstractAircraft enemyAircraft, int selectNum) {
-        BaseProp prop = null;
-        PropFactory propFactory;
-        if (selectNum % 10 == 0 || selectNum % 10 == 1 || selectNum % 10 == 2) {
-            propFactory = new HpPropFactory();
-            prop = propFactory.createProp(enemyAircraft.getLocationX(), enemyAircraft.getLocationY());
-        } else if (selectNum % 10 == 3 || selectNum % 10 == 4 || selectNum % 10 == 5) {
-            propFactory = new PowerPropFactory();
-            prop = propFactory.createProp(enemyAircraft.getLocationX(), enemyAircraft.getLocationY());
-        } else if (selectNum % 10 == 6 || selectNum % 10 == 7 || selectNum % 10 == 8) {
-            propFactory = new BombPropFactory();
-            prop = propFactory.createProp(enemyAircraft.getLocationX(), enemyAircraft.getLocationY());
-        }
-        return prop;
     }
 
     /**
@@ -346,6 +332,7 @@ public class Game extends JPanel {
             assert image != null : objects.getClass().getName() + " has no image! ";
             g.drawImage(image, object.getLocationX() - image.getWidth() / 2,
                     object.getLocationY() - image.getHeight() / 2, null);
+
         }
     }
 
