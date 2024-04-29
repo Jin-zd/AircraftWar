@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+interface RankDao {
+    + List<String> getAllRecords()
+    + void addRecord(String user, String date, String score)
+    + void deleteRecord(String user, String date)
+    + void rankSort()
+    + void printRanks()
+}
+
+class RankDaolmpl {
+    - File record
+    - List<Record> recordsList
+
+    + RankDaolmpl()
+    + List<String> getAllRecords()
+    + void addRecord(String user, String date, String score)
+    + void deleteRecord(String user, String date)
+    + void rankSort()
+    + void printRanks()
+}
+
+RankDao <|.. RankDaolmpl
+
+class Record {
+    - String user
+    - int score
+    - String date
+    + Record(String user, int score, String date)
+    + String toString()
+    + String getUser()
+    + int getScore()
+    + String getDate()
+}
+
+Record <.. RankDaolmpl
+@enduml

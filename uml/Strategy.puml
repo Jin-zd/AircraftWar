@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+interface Strategy {
+    + List<BaseBullet> shootStrategy
+}
+
+class StraightShootStrategy {
+    - AbstractAircraft aircraft
+    + StraightShootStrategy(AbstractAircraft aircraft)
+    + List<BaseBullet> shootStrategy()
+}
+
+class ScatterShootStrategy {
+    - AbstractAircraft aircraft
+    + ScatterShootStrategy(AbstractAircraft aircraft)
+    + List<BaseBullet> shootStrategy()
+}
+
+class RingShootStrategy {
+    - AbstractAircraft aircraft
+    + RingShootStrategy(AbstractAircraft aircraft)
+    + List<BaseBullet> shootStrategy()
+}
+
+Strategy <|.. StraightShootStrategy
+Strategy <|.. ScatterShootStrategy
+Strategy <|.. RingShootStrategy
+
+class Context {
+    - Strategy strategy
+    + Context()
+    + void setStrategy(Strategy strategy)
+    + List<BaseBullet> executeStrategy()
+}
+
+Context o--> Strategy
+@enduml

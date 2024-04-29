@@ -3,6 +3,8 @@ package edu.hitsz.aircraft;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.props.*;
+import edu.hitsz.strategy.Context;
+import edu.hitsz.strategy.Strategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,12 @@ import java.util.List;
  * @author hitsz
  */
 public abstract class AbstractAircraft extends AbstractFlyingObject {
+    protected int shootNum;
+    protected int power;
+    protected int direction;
+
+    protected Context context = new Context();
+
     /**
      * 生命值
      */
@@ -59,14 +67,17 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
         } else {
             X = super.getLocationX() + 40;
         }
-        if (selectNum % 10 == 0 || selectNum % 10 == 1 || selectNum % 10 == 2) {
+        if (selectNum % 10 == 0 || selectNum % 10 == 1) {
             propFactory = new HpPropFactory();
             prop = propFactory.createProp(X, Y);
-        } else if (selectNum % 10 == 3 || selectNum % 10 == 4 || selectNum % 10 == 5) {
+        } else if (selectNum % 10 == 2 || selectNum % 10 == 3) {
             propFactory = new PowerPropFactory();
             prop = propFactory.createProp(X, Y);
-        } else if (selectNum % 10 == 6 || selectNum % 10 == 7 || selectNum % 10 == 8) {
+        } else if (selectNum % 10 == 5 || selectNum % 10 == 6) {
             propFactory = new BombPropFactory();
+            prop = propFactory.createProp(X, Y);
+        } else if (selectNum % 10 == 7 || selectNum % 10 == 8) {
+            propFactory = new SuperPowerPropFactory();
             prop = propFactory.createProp(X, Y);
         }
         return prop;
@@ -80,6 +91,27 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
      * 非可射击对象空实现，返回null
      */
     public abstract List<BaseBullet> shoot();
+
+    public int getShootNum(){
+        return shootNum;
+    }
+
+    public int getPower(){
+        return power;
+    }
+
+    public int getDirection(){
+        return direction;
+    }
+
+    public void changeStrategy(Strategy strategy, int shootNum){
+        this.context.setStrategy(strategy);
+        this.shootNum = shootNum;
+    }
+
+    public List<BaseBullet> executeStrategy(){
+        return context.executeStrategy();
+    }
 
 }
 

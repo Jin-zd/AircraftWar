@@ -2,26 +2,20 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
-import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.props.BaseProp;
+import edu.hitsz.strategy.StraightShootStrategy;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class EliteEnemy extends AbstractAircraft {
-
-    private int shootNum;
-
-    private int power = 10;
-
-    private int direction = 1;
-
-
     public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int shootNum) {
         super(locationX, locationY, speedX, speedY, hp);
         this.shootNum = shootNum;
+        this.direction = 1;
+        this.power = 10;
+        this.changeStrategy(new StraightShootStrategy(this), shootNum);
     }
 
     @Override
@@ -42,7 +36,6 @@ public class EliteEnemy extends AbstractAircraft {
         if (oneProp != null) {
             prop.add(oneProp);
         }
-        //prop.add(super.getOneProp(select));
         return prop;
     }
 
@@ -53,16 +46,6 @@ public class EliteEnemy extends AbstractAircraft {
 
     @Override
     public List<BaseBullet> shoot() {
-        List<BaseBullet> res = new LinkedList<>();
-        int x = this.getLocationX();
-        int y = this.getLocationY() + direction * 2;
-        int speedX = 0;
-        int speedY = this.getSpeedY() + direction * 3;
-        BaseBullet bullet;
-        for (int i = 0; i < shootNum; i++) {
-            bullet = new EnemyBullet(x + (i * 2 - shootNum + 1) * 10, y, speedX, speedY, power);
-            res.add(bullet);
-        }
-        return res;
+        return this.executeStrategy();
     }
 }

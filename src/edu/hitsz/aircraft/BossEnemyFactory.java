@@ -11,7 +11,7 @@ public class BossEnemyFactory implements AircraftFactory{
                 100,
                 5,
                 0,
-                150,
+                300,
                 shootNum
         );
     }

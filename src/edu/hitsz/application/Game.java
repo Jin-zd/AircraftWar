@@ -1,14 +1,19 @@
 package edu.hitsz.application;
 
+import edu.hitsz.DAO.RankDaolmpl;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.props.*;
+import edu.hitsz.strategy.RingShootStrategy;
+import edu.hitsz.strategy.ScatterShootStrategy;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -145,9 +150,19 @@ public class Game extends JPanel {
             // 游戏结束检查英雄机是否存活
             if (heroAircraft.getHp() <= 0) {
                 // 游戏结束
+                Date now = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("MM-dd HH:mm");
+                RankDaolmpl rankDaolmpl = new RankDaolmpl();
+                try {
+                    rankDaolmpl.addRecord("test", String.valueOf(score), formatter.format(now));
+                    rankDaolmpl.printRanks();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 executorService.shutdown();
                 gameOverFlag = true;
                 System.out.println("Game Over!");
+
             }
 
         };
@@ -258,7 +273,14 @@ public class Game extends JPanel {
             if (heroAircraft.crash(prop)) {
                 switch (prop) {
                     case HpProp hpProp -> heroAircraft.increaseHp(hpProp.getHpRecover());
-                    case PowerProp powerProp -> System.out.println("Power Up!!!");
+                    case SuperPowerProp superPowerProp -> {
+                        heroAircraft.increasePower(superPowerProp.getPowerUp());
+                        heroAircraft.changeStrategy(new RingShootStrategy(heroAircraft), 20);
+                    }
+                    case PowerProp powerProp -> {
+                        heroAircraft.increasePower(powerProp.getPowerUp());
+                        heroAircraft.changeStrategy(new ScatterShootStrategy(heroAircraft), 3);
+                    }
                     case BombProp bombProp -> System.out.println("Bomb!!!");
                     default -> {
                     }
