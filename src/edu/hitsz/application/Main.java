@@ -1,5 +1,8 @@
 package edu.hitsz.application;
 
+import GUI.CardLayoutGUI;
+import GUI.StartMenu;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,9 +29,11 @@ public class Main {
                 WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Game game = new Game();
-        frame.add(game);
+        frame.add(CardLayoutGUI.cardPanel);
+
+        StartMenu startMenu = new StartMenu();
+        CardLayoutGUI.cardPanel.add(startMenu.getMainPanel());
+
         frame.setVisible(true);
-        game.action();
     }
 }

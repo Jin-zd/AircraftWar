@@ -2,11 +2,11 @@
 'https://plantuml.com/sequence-diagram
 
 interface RankDao {
-    + List<String> getAllRecords()
-    + void addRecord(String user, String date, String score)
-    + void deleteRecord(String user, String date)
-    + void rankSort()
-    + void printRanks()
+    + {abstract} List<String> getAllRecords()
+    + {abstract} void addRecord(String user, String date, String score)
+    + {abstract} void deleteRecord(String user, String date)
+    + {abstract} void rankSort()
+    + {abstract} void printRanks()
 }
 
 class RankDaolmpl {

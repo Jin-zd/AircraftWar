@@ -2,7 +2,7 @@
 'https://plantuml.com/sequence-diagram
 
 interface Strategy {
-    + List<BaseBullet> shootStrategy
+    + {abstract} List<BaseBullet> shootStrategy
 }
 
 class StraightShootStrategy {

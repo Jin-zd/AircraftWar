@@ -1,5 +1,7 @@
 package edu.hitsz.application;
 
+import GUI.CardLayoutGUI;
+import GUI.EndMenu;
 import edu.hitsz.DAO.RankDaolmpl;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
@@ -16,7 +18,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.*;
 
 /**
@@ -27,6 +28,8 @@ import java.util.concurrent.*;
 public class Game extends JPanel {
 
     private int backGroundTop = 0;
+
+    public static String gameModel = "Easy";
 
     /**
      * Scheduled 线程池，用于任务调度
@@ -92,6 +95,10 @@ public class Game extends JPanel {
 
     }
 
+    public int getScore(){
+        return score;
+    }
+
     /**
      * 游戏启动入口，执行游戏逻辑
      */
@@ -150,12 +157,10 @@ public class Game extends JPanel {
             // 游戏结束检查英雄机是否存活
             if (heroAircraft.getHp() <= 0) {
                 // 游戏结束
-                Date now = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("MM-dd HH:mm");
-                RankDaolmpl rankDaolmpl = new RankDaolmpl();
                 try {
-                    rankDaolmpl.addRecord("test", String.valueOf(score), formatter.format(now));
-                    rankDaolmpl.printRanks();
+                    EndMenu endMenu = new EndMenu(score);
+                    CardLayoutGUI.cardPanel.add(endMenu.getMainPanel());
+                    CardLayoutGUI.cardLayout.last(CardLayoutGUI.cardPanel);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
