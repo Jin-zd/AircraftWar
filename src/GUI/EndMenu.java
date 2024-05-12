@@ -40,7 +40,7 @@ public class EndMenu {
         scoreTable.setModel(tableModel);
         scrollPane.setViewportView(scoreTable);
 
-        gameModel.setText(Game.gameModel);
+        gameModel.setText("难度: " + Game.gameModel);
 
 
         deleteButton.addActionListener(event -> {

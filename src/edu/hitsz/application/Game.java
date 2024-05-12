@@ -3,12 +3,16 @@ package edu.hitsz.application;
 import GUI.CardLayoutGUI;
 import GUI.EndMenu;
 import edu.hitsz.DAO.RankDaolmpl;
+import edu.hitsz.Thread.BgmThread;
+import edu.hitsz.Thread.BossBgmThread;
+import edu.hitsz.Thread.MusicThread;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.props.*;
 import edu.hitsz.strategy.RingShootStrategy;
 import edu.hitsz.strategy.ScatterShootStrategy;
+import edu.hitsz.strategy.StraightShootStrategy;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import javax.swing.*;
@@ -30,6 +34,10 @@ public class Game extends JPanel {
     private int backGroundTop = 0;
 
     public static String gameModel = "Easy";
+    public static boolean bgmOn = true;
+
+    private BgmThread bgm = null;
+    private BossBgmThread bossBgm = null;
 
     /**
      * Scheduled 线程池，用于任务调度
@@ -73,6 +81,15 @@ public class Game extends JPanel {
      * 游戏结束标志
      */
     private boolean gameOverFlag = false;
+    private boolean isBoss = false;
+
+    public boolean getGameOverFlag() {
+        return gameOverFlag;
+    }
+
+    public boolean getIsBoss() {
+        return isBoss;
+    }
 
     public Game() {
         heroAircraft = HeroAircraft.getHeroAircraft();
@@ -95,7 +112,7 @@ public class Game extends JPanel {
 
     }
 
-    public int getScore(){
+    public int getScore() {
         return score;
     }
 
@@ -119,9 +136,14 @@ public class Game extends JPanel {
                 AircraftFactory aircraftFactory;
 
                 if (enemyAircrafts.size() < enemyMaxNumber) {
-                    if (score % 100 <= 20 && score >= 100 && enemyAircrafts.stream().filter(x -> x instanceof BossEnemy).toList().isEmpty()) {
+                    if (score % 200 <= 20 && score >= 100 && enemyAircrafts.stream().filter(x -> x instanceof BossEnemy).toList().isEmpty()) {
                         aircraftFactory = new BossEnemyFactory();
                         enemyAircrafts.add(aircraftFactory.createAircraft(20));
+                        isBoss = true;
+                        if (bgmOn && !gameOverFlag && Objects.isNull(bossBgm)) {
+                            bossBgm = new BossBgmThread("src/videos/bgm_boss.wav", this);
+                            bossBgm.start();
+                        }
                     }
                     if (selectNum % 5 == 1 || selectNum % 5 == 2) {
                         aircraftFactory = new EliteEnemyFactory();
@@ -154,8 +176,26 @@ public class Game extends JPanel {
             //每个时刻重绘界面
             repaint();
 
+            if (bgmOn && !gameOverFlag && Objects.isNull(bgm)) {
+                bgm = new BgmThread("src/videos/bgm.wav", this);
+                bgm.start();
+            }
+
+            if (!Objects.isNull(bossBgm) && !isBoss) {
+                bossBgm.closeMusic();
+                bossBgm = null;
+            }
+
             // 游戏结束检查英雄机是否存活
             if (heroAircraft.getHp() <= 0) {
+                gameOverFlag = true;
+                if (bgmOn) {
+                    new MusicThread("src/videos/game_over.wav").start();
+                    bgm.closeMusic();
+                    if (!Objects.isNull(bossBgm)) {
+                        bossBgm.closeMusic();
+                    }
+                }
                 // 游戏结束
                 try {
                     EndMenu endMenu = new EndMenu(score);
@@ -165,10 +205,11 @@ public class Game extends JPanel {
                     e.printStackTrace();
                 }
                 executorService.shutdown();
-                gameOverFlag = true;
+
                 System.out.println("Game Over!");
 
             }
+
 
         };
 
@@ -201,6 +242,9 @@ public class Game extends JPanel {
         }
         // 英雄射击
         heroBullets.addAll(heroAircraft.shoot());
+//        if (bgmOn) {
+//            new MusicThread("src/videos/bullet.wav").start();
+//        }
     }
 
     private void bulletsMoveAction() {
@@ -251,11 +295,18 @@ public class Game extends JPanel {
                     continue;
                 }
                 if (enemyAircraft.crash(bullet)) {
+                    if (bgmOn) {
+                        new MusicThread("src/videos/bullet_hit.wav").start();
+                    }
                     // 敌机撞击到英雄机子弹
                     // 敌机损失一定生命值
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
+                        if (enemyAircraft instanceof BossEnemy && !Objects.isNull(bossBgm)) {
+                            bossBgm.closeMusic();
+                            bossBgm = null;
+                        }
                         List<BaseProp> prop = enemyAircraft.getProp();
                         if (!prop.isEmpty()) {
                             props.addAll(prop);
@@ -276,15 +327,34 @@ public class Game extends JPanel {
                 continue;
             }
             if (heroAircraft.crash(prop)) {
+                if (bgmOn) {
+                    new MusicThread("src/videos/get_supply.wav").start();
+                }
                 switch (prop) {
                     case HpProp hpProp -> heroAircraft.increaseHp(hpProp.getHpRecover());
                     case SuperPowerProp superPowerProp -> {
-                        heroAircraft.increasePower(superPowerProp.getPowerUp());
-                        heroAircraft.changeStrategy(new RingShootStrategy(heroAircraft), 20);
+                        Runnable superPropTread = () -> {
+                            try {
+                                heroAircraft.changeStrategy(new RingShootStrategy(heroAircraft), 20);
+                                Thread.sleep(10000);
+                                heroAircraft.changeStrategy(new StraightShootStrategy(heroAircraft), 1);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        };
+                        new Thread(superPropTread).start();
                     }
                     case PowerProp powerProp -> {
-                        heroAircraft.increasePower(powerProp.getPowerUp());
-                        heroAircraft.changeStrategy(new ScatterShootStrategy(heroAircraft), 3);
+                        Runnable powerPropTread = () -> {
+                            try {
+                                heroAircraft.changeStrategy(new ScatterShootStrategy(heroAircraft), 3);
+                                Thread.sleep(10000);
+                                heroAircraft.changeStrategy(new StraightShootStrategy(heroAircraft), 1);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        };
+                        new Thread(powerPropTread).start();
                     }
                     case BombProp bombProp -> System.out.println("Bomb!!!");
                     default -> {

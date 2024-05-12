@@ -1,6 +1,7 @@
 package GUI;
 
 import edu.hitsz.DAO.RankDaolmpl;
+import edu.hitsz.Thread.MusicThread;
 import edu.hitsz.application.Game;
 import edu.hitsz.application.ImageManager;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +10,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 public class StartMenu {
     private JPanel mainPanel;
@@ -26,6 +30,12 @@ public class StartMenu {
         easyButton.addActionListener(new BackGroundAction());
         normalButton.addActionListener(new BackGroundAction());
         hardButton.addActionListener(new BackGroundAction());
+        soundBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedOption = (String) soundBox.getSelectedItem();
+                Game.bgmOn = Objects.equals(selectedOption, "是");
+            }
+        });
     }
 
     private void changeBackground(@NotNull String model) {
