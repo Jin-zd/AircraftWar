@@ -73,4 +73,8 @@ public class HeroAircraft extends AbstractAircraft {
         this.power = this.power + powerUp;
     }
 
+    @Override
+    public void response() {
+
+    }
 }

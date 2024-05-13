@@ -1,4 +1,4 @@
-package edu.hitsz.Thread;
+package edu.hitsz.thread;
 
 import edu.hitsz.application.Game;
 

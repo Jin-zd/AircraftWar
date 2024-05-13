@@ -14,9 +14,15 @@ public class RankDaolmpl implements RankDao {
 
     public RankDaolmpl() {
         switch (Game.gameModel) {
-            case "Easy": record = new File("src/edu/hitsz/DAO/EasyRecord.txt"); break;
-            case "Normal": record = new File("src/edu/hitsz/DAO/NormalRecord.txt"); break;
-            case "Hard": record = new File("src/edu/hitsz/DAO/HardRecord.txt"); break;
+            case "Easy":
+                record = new File("src/edu/hitsz/DAO/EasyRecord.txt");
+                break;
+            case "Normal":
+                record = new File("src/edu/hitsz/DAO/NormalRecord.txt");
+                break;
+            case "Hard":
+                record = new File("src/edu/hitsz/DAO/HardRecord.txt");
+                break;
         }
         recordsList = new ArrayList<>();
     }
@@ -28,7 +34,7 @@ public class RankDaolmpl implements RankDao {
 
     @Override
     public void addRecord(String user, String score, String date) throws IOException {
-        Files.write(record.toPath(), (user + "," + score + "," + date +  "\n").getBytes(), StandardOpenOption.APPEND);
+        Files.write(record.toPath(), (user + "," + score + "," + date + "\n").getBytes(), StandardOpenOption.APPEND);
     }
 
     @Override
@@ -54,7 +60,7 @@ public class RankDaolmpl implements RankDao {
 
     @Override
     public void rankSort() {
-        recordsList.sort((x, y)-> y.getScore() - x.getScore());
+        recordsList.sort((x, y) -> y.getScore() - x.getScore());
     }
 
     @Override
@@ -76,17 +82,19 @@ public class RankDaolmpl implements RankDao {
 
     @Override
     public String[][] getSortRecordsArray() throws IOException {
-        List<String> records = getAllRecords();
-        for (String record : records) {
-            String[] split = record.split(",");
-            recordsList.add(new Record(split[0], Integer.parseInt(split[1]), split[2]));
+        if (recordsList.isEmpty()) {
+            List<String> records = getAllRecords();
+            for (String record : records) {
+                String[] split = record.split(",");
+                recordsList.add(new Record(split[0], Integer.parseInt(split[1]), split[2]));
+            }
         }
         rankSort();
 
         int length = recordsList.size();
         String[][] sortRecords = new String[length][];
         for (int i = 0; i < length; i++) {
-            sortRecords[i] = recordsList.get(i).toString().split(",");
+            sortRecords[i] = ((i + 1) + "," + recordsList.get(i).toString()).split(",");
         }
         return sortRecords;
     }

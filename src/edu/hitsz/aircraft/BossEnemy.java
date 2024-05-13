@@ -42,4 +42,9 @@ public class BossEnemy extends AbstractAircraft {
     public List<BaseBullet> shoot() {
         return  this.executeStrategy();
     }
+
+    @Override
+    public void response() {
+
+    }
 }

@@ -2,10 +2,10 @@ package edu.hitsz.application;
 
 import GUI.CardLayoutGUI;
 import GUI.EndMenu;
-import edu.hitsz.DAO.RankDaolmpl;
-import edu.hitsz.Thread.BgmThread;
-import edu.hitsz.Thread.BossBgmThread;
-import edu.hitsz.Thread.MusicThread;
+import edu.hitsz.observer.BombObserver;
+import edu.hitsz.thread.BgmThread;
+import edu.hitsz.thread.BossBgmThread;
+import edu.hitsz.thread.MusicThread;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
@@ -19,7 +19,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -55,6 +54,10 @@ public class Game extends JPanel {
     private final List<BaseBullet> enemyBullets;
 
     private final List<BaseProp> props;
+
+    private final BombObserver bombObserver;
+
+    private int powerPropNum;
 
     /**
      * 屏幕中出现的敌机最大数量
@@ -99,6 +102,9 @@ public class Game extends JPanel {
         enemyBullets = new LinkedList<>();
         props = new LinkedList<>();
 
+        bombObserver = new BombObserver();
+        powerPropNum = 0;
+
         /**
          * Scheduled 线程池，用于定时任务调度
          * 关于alibaba code guide：可命名的 ThreadFactory 一般需要第三方包
@@ -134,11 +140,14 @@ public class Game extends JPanel {
                 Random r = new Random();
                 int selectNum = r.nextInt();
                 AircraftFactory aircraftFactory;
+                AbstractAircraft aircraft;
 
                 if (enemyAircrafts.size() < enemyMaxNumber) {
                     if (score % 200 <= 20 && score >= 100 && enemyAircrafts.stream().filter(x -> x instanceof BossEnemy).toList().isEmpty()) {
                         aircraftFactory = new BossEnemyFactory();
-                        enemyAircrafts.add(aircraftFactory.createAircraft(20));
+                        aircraft = aircraftFactory.createAircraft(20);
+                        enemyAircrafts.add(aircraft);
+                        bombObserver.registerResponser(aircraft);
                         isBoss = true;
                         if (bgmOn && !gameOverFlag && Objects.isNull(bossBgm)) {
                             bossBgm = new BossBgmThread("src/videos/bgm_boss.wav", this);
@@ -147,13 +156,19 @@ public class Game extends JPanel {
                     }
                     if (selectNum % 5 == 1 || selectNum % 5 == 2) {
                         aircraftFactory = new EliteEnemyFactory();
-                        enemyAircrafts.add(aircraftFactory.createAircraft(1));
+                        aircraft = aircraftFactory.createAircraft(1);
+                        enemyAircrafts.add(aircraft);
+                        bombObserver.registerResponser(aircraft);
                     } else if (selectNum % 5 == 3) {
                         aircraftFactory = new EliteEnemyFactory();
-                        enemyAircrafts.add(aircraftFactory.createAircraft(3));
+                        aircraft = aircraftFactory.createAircraft(3);
+                        enemyAircrafts.add(aircraft);
+                        bombObserver.registerResponser(aircraft);
                     } else {
                         aircraftFactory = new MobEnemyFactory();
-                        enemyAircrafts.add(aircraftFactory.createAircraft(0));
+                        aircraft = aircraftFactory.createAircraft(0);
+                        enemyAircrafts.add(aircraft);
+                        bombObserver.registerResponser(aircraft);
                     }
 
                 }
@@ -198,8 +213,12 @@ public class Game extends JPanel {
                 }
                 // 游戏结束
                 try {
-                    EndMenu endMenu = new EndMenu(score);
-                    CardLayoutGUI.cardPanel.add(endMenu.getMainPanel());
+                    EndMenu endMenuBottom = new EndMenu(score, true);
+                    CardLayoutGUI.cardPanel.add(endMenuBottom.getMainPanel());
+                    CardLayoutGUI.cardLayout.next(CardLayoutGUI.cardPanel);
+
+                    EndMenu endMenuTop = new EndMenu(score, false);
+                    CardLayoutGUI.cardPanel.add(endMenuTop.getMainPanel());
                     CardLayoutGUI.cardLayout.last(CardLayoutGUI.cardPanel);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -237,11 +256,16 @@ public class Game extends JPanel {
     }
 
     private void shootAction() {
+        List<BaseBullet> baseBulletList;
         for (AbstractAircraft enemyAircraft : enemyAircrafts) {
-            enemyBullets.addAll(enemyAircraft.shoot());
+            baseBulletList = enemyAircraft.shoot();
+            enemyBullets.addAll(baseBulletList);
+            bombObserver.registerAllBullet(baseBulletList);
         }
         // 英雄射击
-        heroBullets.addAll(heroAircraft.shoot());
+        baseBulletList = heroAircraft.shoot();
+        heroBullets.addAll(baseBulletList);
+        bombObserver.registerAllBullet(baseBulletList);
 //        if (bgmOn) {
 //            new MusicThread("src/videos/bullet.wav").start();
 //        }
@@ -301,6 +325,9 @@ public class Game extends JPanel {
                     // 敌机撞击到英雄机子弹
                     // 敌机损失一定生命值
                     enemyAircraft.decreaseHp(bullet.getPower());
+                    if (enemyAircraft.notValid()) {
+                        score += enemyAircraft.getScore();
+                    }
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
                         if (enemyAircraft instanceof BossEnemy && !Objects.isNull(bossBgm)) {
@@ -311,7 +338,6 @@ public class Game extends JPanel {
                         if (!prop.isEmpty()) {
                             props.addAll(prop);
                         }
-                        score += enemyAircraft.getScore();
                     }
                 }
                 // 英雄机 与 敌机 相撞，均损毁
@@ -321,7 +347,7 @@ public class Game extends JPanel {
                 }
             }
         }
-
+        Object lock = new Object();
         for (BaseProp prop : props) {
             if (prop.notValid()) {
                 continue;
@@ -331,8 +357,12 @@ public class Game extends JPanel {
                     new MusicThread("src/videos/get_supply.wav").start();
                 }
                 switch (prop) {
-                    case HpProp hpProp -> heroAircraft.increaseHp(hpProp.getHpRecover());
+                    case HpProp hpProp -> {
+                        System.out.println("Hp Prop Activates!");
+                        heroAircraft.increaseHp(hpProp.getHpRecover());
+                    }
                     case SuperPowerProp superPowerProp -> {
+                        System.out.println("Super Power Prop Activates!");
                         Runnable superPropTread = () -> {
                             try {
                                 heroAircraft.changeStrategy(new RingShootStrategy(heroAircraft), 20);
@@ -345,6 +375,7 @@ public class Game extends JPanel {
                         new Thread(superPropTread).start();
                     }
                     case PowerProp powerProp -> {
+                        System.out.println("Power Prop Activates!");
                         Runnable powerPropTread = () -> {
                             try {
                                 heroAircraft.changeStrategy(new ScatterShootStrategy(heroAircraft), 3);
@@ -356,7 +387,14 @@ public class Game extends JPanel {
                         };
                         new Thread(powerPropTread).start();
                     }
-                    case BombProp bombProp -> System.out.println("Bomb!!!");
+                    case BombProp bombProp -> {
+                        if (bgmOn) {
+                            new MusicThread("src/videos/bomb_explosion.wav").start();
+                        }
+                        bombProp.Bomb();
+                        bombObserver.checkIsBomb(bombProp);
+                        System.out.println("Bomb Prop Activates!");
+                    }
                     default -> {
                     }
                 }

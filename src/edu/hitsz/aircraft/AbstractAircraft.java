@@ -1,5 +1,6 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.observer.Responser;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.props.*;
@@ -15,7 +16,7 @@ import java.util.List;
  *
  * @author hitsz
  */
-public abstract class AbstractAircraft extends AbstractFlyingObject {
+public abstract class AbstractAircraft extends AbstractFlyingObject implements Responser {
     protected int shootNum;
     protected int power;
     protected int direction;

@@ -41,4 +41,9 @@ public class ElitePlusEnemy extends AbstractAircraft {
     public List<BaseBullet> shoot() {
         return this.executeStrategy();
     }
+
+    @Override
+    public void response() {
+        this.decreaseHp(this.hp / 2);
+    }
 }

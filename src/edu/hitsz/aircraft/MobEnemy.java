@@ -37,4 +37,8 @@ public class MobEnemy extends AbstractAircraft {
         return new LinkedList<>();
     }
 
+    @Override
+    public void response() {
+        this.vanish();
+    }
 }
