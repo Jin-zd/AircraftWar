@@ -43,8 +43,4 @@ public class BossEnemy extends AbstractAircraft {
         return  this.executeStrategy();
     }
 
-    @Override
-    public void response() {
-
-    }
 }

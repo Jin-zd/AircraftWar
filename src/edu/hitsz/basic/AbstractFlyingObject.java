@@ -1,8 +1,10 @@
 package edu.hitsz.basic;
 
 import edu.hitsz.aircraft.AbstractAircraft;
+import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
+import edu.hitsz.observer.Responser;
 
 import java.awt.image.BufferedImage;
 
@@ -11,7 +13,7 @@ import java.awt.image.BufferedImage;
  *
  * @author hitsz
  */
-public abstract class AbstractFlyingObject {
+public abstract class AbstractFlyingObject implements Responser{
 
     //locationX、locationY为图片中心位置坐标
     /**
@@ -165,6 +167,11 @@ public abstract class AbstractFlyingObject {
      */
     public void vanish() {
         isValid = false;
+    }
+
+    @Override
+    public void response(){
+
     }
 
 }

@@ -19,19 +19,9 @@ public class EliteEnemy extends AbstractAircraft {
     }
 
     @Override
-    public void forward() {
-        super.forward();
-
-        if (locationY >= Main.WINDOW_HEIGHT) {
-            vanish();
-        }
-    }
-
-    @Override
     public List<BaseProp> getProp() {
         List<BaseProp> prop = new ArrayList<>();
-        Random r = new Random();
-        int select = r.nextInt();
+        int select = new Random().nextInt();
         BaseProp oneProp = super.getOneProp(select, 0);
         if (oneProp != null) {
             prop.add(oneProp);

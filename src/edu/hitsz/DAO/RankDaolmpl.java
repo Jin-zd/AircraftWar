@@ -1,6 +1,6 @@
 package edu.hitsz.DAO;
 
-import edu.hitsz.application.Game;
+import edu.hitsz.game.GameTemplate;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ public class RankDaolmpl implements RankDao {
     private final List<Record> recordsList;
 
     public RankDaolmpl() {
-        switch (Game.gameModel) {
+        switch (GameTemplate.gameModel) {
             case "Easy":
                 record = new File("src/edu/hitsz/DAO/EasyRecord.txt");
                 break;

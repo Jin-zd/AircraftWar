@@ -1,5 +1,7 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.application.Main;
+import edu.hitsz.factory.props.*;
 import edu.hitsz.observer.Responser;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
@@ -23,6 +25,8 @@ public abstract class AbstractAircraft extends AbstractFlyingObject implements R
 
     protected Context context = new Context();
 
+    private boolean isOutOfBounds = false;
+
     /**
      * 生命值
      */
@@ -33,6 +37,14 @@ public abstract class AbstractAircraft extends AbstractFlyingObject implements R
         super(locationX, locationY, speedX, speedY);
         this.hp = hp;
         this.maxHp = hp;
+    }
+
+    public void outOfBounds() {
+        isOutOfBounds = true;
+    }
+
+    public boolean getIsOutOfBounds() {
+        return isOutOfBounds;
     }
 
     public void decreaseHp(int decrease) {
@@ -84,6 +96,13 @@ public abstract class AbstractAircraft extends AbstractFlyingObject implements R
         return prop;
     }
 
+    @Override
+    public void forward(){
+        super.forward();
+        if (locationY >= Main.WINDOW_HEIGHT && !(this instanceof HeroAircraft)) {
+            outOfBounds();
+        }
+    }
 
     /**
      * 飞机射击方法，可射击对象必须实现

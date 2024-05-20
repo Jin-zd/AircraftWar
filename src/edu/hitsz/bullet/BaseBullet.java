@@ -12,7 +12,7 @@ import edu.hitsz.basic.AbstractFlyingObject;
  */
 public abstract class BaseBullet extends AbstractFlyingObject implements Responser {
 
-    private int power = 10;
+    private int power;
 
     public BaseBullet(int locationX, int locationY, int speedX, int speedY, int power) {
         super(locationX, locationY, speedX, speedY);
@@ -40,5 +40,10 @@ public abstract class BaseBullet extends AbstractFlyingObject implements Respons
 
     public int getPower() {
         return power;
+    }
+
+    @Override
+    public void response(){
+
     }
 }

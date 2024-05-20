@@ -1,7 +1,10 @@
 package GUI;
 
-import edu.hitsz.application.Game;
 import edu.hitsz.application.ImageManager;
+import edu.hitsz.game.EasyGame;
+import edu.hitsz.game.GameTemplate;
+import edu.hitsz.game.HardGame;
+import edu.hitsz.game.NormalGame;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -26,39 +29,40 @@ public class StartMenu {
         easyButton.addActionListener(new BackGroundAction());
         normalButton.addActionListener(new BackGroundAction());
         hardButton.addActionListener(new BackGroundAction());
-        soundBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String selectedOption = (String) soundBox.getSelectedItem();
-                Game.bgmOn = Objects.equals(selectedOption, "是");
-            }
+        soundBox.addActionListener(e -> {
+            String selectedOption = (String) soundBox.getSelectedItem();
+            GameTemplate.bgmOn = Objects.equals(selectedOption, "是");
         });
     }
 
-    private void changeBackground(@NotNull String model) {
+    private GameTemplate chooseModel(@NotNull String model) {
         try {
             switch (model) {
-                case "简单模式":
+                case "简单模式"-> {
                     ImageManager.BACKGROUND_IMAGE = ImageIO.read(new FileInputStream("src/images/bg.jpg"));
-                    Game.gameModel = "Easy";
-                    break;
-                case "普通模式":
+                    GameTemplate.gameModel = "Easy";
+                    return new EasyGame();
+                }
+                case "普通模式"-> {
                     ImageManager.BACKGROUND_IMAGE = ImageIO.read(new FileInputStream("src/images/bg2.jpg"));
-                    Game.gameModel = "Normal";
-                    break;
-                case "困难模式":
+                    GameTemplate.gameModel = "Normal";
+                    return new NormalGame();
+                }
+                case "困难模式"-> {
                     ImageManager.BACKGROUND_IMAGE = ImageIO.read(new FileInputStream("src/images/bg5.jpg"));
-                    Game.gameModel = "Hard";
-                    break;
+                    GameTemplate.gameModel = "Hard";
+                    return new HardGame();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return new EasyGame();
     }
 
     private class BackGroundAction implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            changeBackground(event.getActionCommand());
-            Game game = new Game();
+            GameTemplate game = chooseModel(event.getActionCommand());
             CardLayoutGUI.cardPanel.add(game);
             CardLayoutGUI.cardLayout.next(CardLayoutGUI.cardPanel);
             game.action();

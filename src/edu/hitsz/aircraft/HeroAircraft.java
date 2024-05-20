@@ -48,11 +48,6 @@ public class HeroAircraft extends AbstractAircraft {
     }
 
     @Override
-    public void forward() {
-        // 英雄机由鼠标控制，不通过forward函数移动
-    }
-
-    @Override
     /**
      * 通过射击产生子弹
      * @return 射击出的子弹List
@@ -69,12 +64,4 @@ public class HeroAircraft extends AbstractAircraft {
         }
     }
 
-    public void increasePower(int powerUp) {
-        this.power = this.power + powerUp;
-    }
-
-    @Override
-    public void response() {
-
-    }
 }

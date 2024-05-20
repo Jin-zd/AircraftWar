@@ -1,11 +1,11 @@
 package edu.hitsz.thread;
 
-import edu.hitsz.application.Game;
+import edu.hitsz.game.GameTemplate;
 
 public class BossBgmThread extends MusicThread{
-    private final Game game;
+    private final GameTemplate game;
 
-    public BossBgmThread(String filename, Game game) {
+    public BossBgmThread(String filename, GameTemplate game) {
         super(filename);
         this.game = game;
     }

@@ -1,7 +1,7 @@
 package GUI;
 
 import edu.hitsz.DAO.RankDaolmpl;
-import edu.hitsz.application.Game;
+import edu.hitsz.game.GameTemplate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -43,7 +43,7 @@ public class EndMenu {
         scoreTable.setModel(tableModel);
         scrollPane.setViewportView(scoreTable);
 
-        gameModel.setText("难度: " + Game.gameModel);
+        gameModel.setText("难度: " + GameTemplate.gameModel);
 
         deleteButton.addActionListener(event -> {
             int selectedRow = scoreTable.getSelectedRow();
