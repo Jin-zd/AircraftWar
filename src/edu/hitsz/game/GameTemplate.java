@@ -11,7 +11,6 @@ import edu.hitsz.application.Main;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.factory.aircraft.AircraftFactory;
-import edu.hitsz.factory.aircraft.BossEnemyFactory;
 import edu.hitsz.factory.aircraft.EliteEnemyFactory;
 import edu.hitsz.factory.aircraft.MobEnemyFactory;
 import edu.hitsz.props.*;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -110,7 +108,8 @@ public abstract class GameTemplate extends JPanel {
 
     protected abstract void increaseDifficulty();
 
-    protected void noBossEnemyGenerator(int selectNum, AircraftFactory aircraftFactory) {
+    protected void noBossEnemyGenerator(int selectNum) {
+        AircraftFactory aircraftFactory;
         if (selectNum % modNum <= halfNum) {
             aircraftFactory = new MobEnemyFactory();
             enemyAircrafts.add(aircraftFactory.createAircraft(0, mobHp));
@@ -153,34 +152,6 @@ public abstract class GameTemplate extends JPanel {
 
     }
 
-    private class WarningPanel extends JPanel {
-        private JLabel warningLabel;
-        private boolean isVisible = false;
-
-        public WarningPanel() {
-            setPreferredSize(new Dimension(800, 50));
-            setBackground(Color.RED);
-            warningLabel = new JLabel("BOSS IS COMING!", JLabel.CENTER);
-            warningLabel.setForeground(Color.WHITE);
-            add(warningLabel);
-        }
-
-        public void toggleVisibility() {
-            isVisible = !isVisible;
-            setVisible(isVisible);
-        }
-    }
-
-    protected void showBossWarning() {
-
-        try {
-            Thread.sleep(3000);
-
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     protected void bossBgmOn() {
         if (bgmOn && !gameOverFlag && Objects.isNull(bossBgm)) {
             bossBgm = new BossBgmThread("src/videos/bgm_boss.wav", this);
@@ -191,7 +162,7 @@ public abstract class GameTemplate extends JPanel {
     /**
      * 游戏启动入口，执行游戏逻辑
      */
-    public void action() {
+    public final void action() {
 
         // 定时任务：绘制、对象产生、碰撞判定、击毁及结束判定
         Runnable task = () -> {

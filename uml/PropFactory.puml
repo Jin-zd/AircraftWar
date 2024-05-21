@@ -17,12 +17,17 @@ class PowerProp {
     + PowerProp(int locationX, int locationY, int speedX, int speedY, int powerUp)
 }
 
+class SuperPowerProp {
+    + SuperPowerProp(int locationX, int locationY, int speedX, int speedY)
+}
+
 BaseProp <|-- BombProp
 BaseProp <|-- HpProp
 BaseProp <|-- PowerProp
+BaseProp <|-- SuperPowerProp
 
 interface PropFactory {
-    + createProp(int x, int y): BaseProp
+    + {abstract}createProp(int x, int y): BaseProp
 }
 
 class BombPropFactory {
@@ -37,9 +42,14 @@ class PowerPropFactory {
     + createProp(int x, int y): BaseProp
 }
 
+class SuperPowerPropFactory {
+    + createProp(int x, int y): BaseProp
+}
+
 PropFactory <|.. BombPropFactory
 PropFactory <|.. HpPropFactory
 PropFactory <|.. PowerPropFactory
+PropFactory <|.. SuperPowerPropFactory
 
 BaseProp <.. PropFactory
 

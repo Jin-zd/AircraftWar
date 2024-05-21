@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class GameTemplate {
+    # modNum: int
+    # bossHp: int
+    # eliteHp: int
+    # elitePlusHp: int
+    # mobHp: int
+    # halfNUm: int
+    # rate: double
+    # timeInterval: int
+    # enemyMaxNumber: int
+    # cycleTime: int
+    # aircraftCycleDuration: int
+    # aircraftCycleTime: int
+    # shootCycleDuration: int
+    # shootCycleTime: int
+    # cycleCount: int
+    # increaseNum: int
+
+    + GameTemplate()
+    + action(): void
+    # noBossEnemyGenerator(int selectNum): void
+    # {abstract} enemyGenerator(): void
+    # {abstract} increaseDifficulty(): void
+}
+
+class EasyGame{
+    + EasyGame()
+    # enemyGenerator(): void
+    # increaseDifficulty(): void
+}
+
+class NormalGame{
+    + NormalGame()
+    # enemyGenerator(): void
+    # increaseDifficulty(): void
+}
+
+class HardGame{
+    + HardGame()
+    # enemyGenerator(): void
+    # increaseDifficulty(): void
+}
+
+GameTemplate <|-- EasyGame
+GameTemplate <|-- NormalGame
+GameTemplate <|-- HardGame
+@enduml

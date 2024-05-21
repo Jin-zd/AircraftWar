@@ -1,0 +1,49 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Responser{
+    + {abstract} response: void
+}
+
+class BoomProp {
+    - bomb: boolean
+    - responserList: List<AbstractFlyingObject>
+    + BoomProp(int locationX, int locationY, int speedX, int speedY)
+    + bomb(): void
+    + registerAllEnemies(List<AbstractAircraft> allEnemies): void
+    + registerAllBullets(List<BaseBullet> allBullets): void
+    + notifyResponse(): void
+    + checkIsBomb(): void
+}
+
+abstract class AbstractFlyingObject
+{
+    # locationX:int
+    # locationY:int
+    # speedX:int
+    # speedY:int
+    # image:BufferedImage
+    # width:int
+    # height:int
+    # isValid:boolean
+
+    + AbstractFlyingObject(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+    + crash(AbstractFlyingObject flyingObject):boolean
+    + setLocation(double locationX, double locationY):void
+    + getLocationX():int
+    + getLocationY():int
+    + getSpeedY():int
+    + getImage():BufferedImage
+    + getWidth():int
+    + getHeight():int
+    + notValid():boolean
+    + vanish():void
+    + {abstract} response(): void
+}
+
+Responser <|.. AbstractFlyingObject
+
+BoomProp o--> Responser
+
+@enduml

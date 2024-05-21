@@ -2,10 +2,11 @@
 'https://plantuml.com/sequence-diagram
 
 class HeroAircraft {
-    - {static} heroCraft: HeroAircraft
-
+    - {static} heroAircraft: HeroAircraft
     - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
-    + {static} getHeroAircraft(): HeroAircraft
+    + {static} getHeroAircraft():HeroAircraft
+    + shoot():List<BaseBullet>
+    + increaseHp(int hpUp): int
 }
 
 HeroAircraft <-- HeroAircraft

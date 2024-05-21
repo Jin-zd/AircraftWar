@@ -6,21 +6,21 @@ interface Strategy {
 }
 
 class StraightShootStrategy {
-    - AbstractAircraft aircraft
+    - aircraft: AbstractAircraft
     + StraightShootStrategy(AbstractAircraft aircraft)
-    + List<BaseBullet> shootStrategy()
+    + shootStrategy(): List<BaseBullet>
 }
 
 class ScatterShootStrategy {
-    - AbstractAircraft aircraft
+    - aircraft: AbstractAircraft
     + ScatterShootStrategy(AbstractAircraft aircraft)
-    + List<BaseBullet> shootStrategy()
+    + shootStrategy(): List<BaseBullet>
 }
 
 class RingShootStrategy {
-    - AbstractAircraft aircraft
+    - aircraft: AbstractAircraft
     + RingShootStrategy(AbstractAircraft aircraft)
-    + List<BaseBullet> shootStrategy()
+    + shootStrategy(): List<BaseBullet>
 }
 
 Strategy <|.. StraightShootStrategy
@@ -28,10 +28,10 @@ Strategy <|.. ScatterShootStrategy
 Strategy <|.. RingShootStrategy
 
 class Context {
-    - Strategy strategy
+    - strategy: Strategy
     + Context()
-    + void setStrategy(Strategy strategy)
-    + List<BaseBullet> executeStrategy()
+    + setStrategy(Strategy strategy): void
+    + executeStrategy(): List<BaseBullet>
 }
 
 Context o--> Strategy

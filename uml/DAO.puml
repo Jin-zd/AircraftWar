@@ -2,36 +2,41 @@
 'https://plantuml.com/sequence-diagram
 
 interface RankDao {
-    + {abstract} List<String> getAllRecords()
-    + {abstract} void addRecord(String user, String date, String score)
-    + {abstract} void deleteRecord(String user, String date)
-    + {abstract} void rankSort()
-    + {abstract} void printRanks()
+    + {abstract} getAllRecords(): List<String>
+    + {abstract} addRecord(String user, String date, String score): void
+    + {abstract} deleteRecord(String user, String date): void
+    + {abstract} deleteRecord(int row): void
+    + {abstract} rankSort(): void
+    + {abstract} printRanks(): void
+    + {abstract} getSortRecordsArray(): String[][]
+
 }
 
 class RankDaolmpl {
-    - File record
-    - List<Record> recordsList
+    - record: File
+    - recordsList: List<Record>
 
     + RankDaolmpl()
-    + List<String> getAllRecords()
-    + void addRecord(String user, String date, String score)
-    + void deleteRecord(String user, String date)
-    + void rankSort()
-    + void printRanks()
+    + getAllRecords(): List<String>
+    + addRecord(String user, String date, String score): void
+    + deleteRecord(String user, String date): void
+    + deleteRecord(int row): void
+    + rankSort(): void
+    + printRanks(): void
+    + getSortRecordsArray(): String[][]
 }
 
 RankDao <|.. RankDaolmpl
 
 class Record {
-    - String user
-    - int score
-    - String date
+    - user: String
+    - score: int
+    - date: String
     + Record(String user, int score, String date)
-    + String toString()
-    + String getUser()
-    + int getScore()
-    + String getDate()
+    + toString(): String
+    + getUser(): String
+    + getScore(): int
+    + getDate(): String
 }
 
 Record <.. RankDaolmpl

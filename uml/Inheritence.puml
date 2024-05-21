@@ -123,8 +123,7 @@ class HeroBullet {
 }
 
 class EnemyBullet {
-    + EnemyBullet(int locationX, int locationY,
-     int speedX, int speedY, int power)
+    + EnemyBullet(int locationX, int locationY, int speedX, int speedY, int power)
     + response(): void
 }
 

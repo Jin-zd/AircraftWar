@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class BaseProp {
+    + BaseProp(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+}
+
+class HpProp {
+    - hpRecover: int
+    + HpProp(int locationX, int locationY, int speedX, int speedY, int hpRecover)
+    + getHpRecover(): int
+}
+
+class PowerProp {
+    + PowerProp(int locationX, int locationY, int speedX, int speedY)
+}
+
+class SuperPowerProp {
+    + SuperPowerProp(int locationX, int locationY, int speedX, int speedY)
+}
+
+class BoomProp {
+    - bomb: boolean
+    - responserList: List<AbstractFlyingObject>
+    + BoomProp(int locationX, int locationY, int speedX, int speedY)
+    + bomb(): void
+    + registerAllEnemies(List<AbstractAircraft> allEnemies): void
+    + registerAllBullets(List<BaseBullet> allBullets): void
+    + notifyResponse(): void
+    + checkIsBomb(): void
+}
+
+BaseProp <|-- HpProp
+BaseProp <|-- PowerProp
+BaseProp <|-- SuperPowerProp
+BaseProp <|-- BoomProp
+
+@enduml

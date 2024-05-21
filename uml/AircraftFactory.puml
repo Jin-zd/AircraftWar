@@ -10,27 +10,41 @@ class MobEnemy {
 }
 
 class EliteEnemy {
-    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int shootNum)
+}
+
+class ElitePlusEnemy {
+    + ElitePlusEnemy(int locationX, int locationY, int speedX, int sppedY, int hp, int shootNum)
+}
+
+class BossEnemy {
+    + BossEnemy(int locationX, int locationY, int speedX, int sppedY, int hp, int shootNum)
 }
 
 AbstractAircraft <|-- MobEnemy
 AbstractAircraft <|-- EliteEnemy
+AbstractAircraft <|-- ElitePlusEnemy
+AbstractAircraft <|-- BossEnemy
 
 interface AircraftFactory {
-    + creatAircraft(): AbstractAircraft
+    + {abstract} creatAircraft(int shootNum, int hp): AbstractAircraft
 }
 
 class MobEnemyFactory {
-    + creatAircraft(): AbstractAircraft
+    + creatAircraft(int shootNum, int hp): AbstractAircraft
 }
 
 class EliteEnemyFactory {
-    + creatAircraft(): AbstractAircraft
+    + creatAircraft(int shootNum, int hp): AbstractAircraft
+}
+
+class BossEnemyFactory {
+    + creatAircraft(int shootNum, int hp): AbstractAircraft
 }
 
 AircraftFactory <|.. MobEnemyFactory
 AircraftFactory <|.. EliteEnemyFactory
-
+AircraftFactory <|.. BossEnemyFactory
 
 AbstractAircraft <.. AircraftFactory
 @enduml

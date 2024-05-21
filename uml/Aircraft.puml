@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class AbstractAircraft
+{
+	# maxHp:int
+    # hp:int
+    # shootNum: int
+    # power: int
+    # direction: int
+    # context: Context
+    # isOutOfBounds: boolean
+    + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + decreaseHp(int decrease):void
+    + getHp():int
+    + outOfBounds(): void
+    + getIsOutOfBounds(): boolean
+    + getProp(): List<BaseProp>
+    + getScore(): int
+    + getOneProp(int selectNum, int count): BaseProp
+    + forward(): void
+    + getShootNum(): int
+    + getPower(): int
+    + getDirection(): int
+    + changeStrategy(Strategy strategy, int shootNum): void
+    + executeStrategy(): List<BaseBullet>
+    + {abstract} shoot():List<BaseBullet>
+ }
+
+
+class HeroAircraft {
+    - heroAircraft: HeroAircraft
+    - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + {static} getHeroAircraft():HeroAircraft
+    + shoot():List<BaseBullet>
+    + increaseHp(int hpUp): int
+}
+
+AbstractAircraft <|-- HeroAircraft
+
+class MobEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore(): int
+    + response(): void
+}
+
+AbstractAircraft <|-- MobEnemy
+
+class EliteEnemy {
+    + EliteEnemy(int locationX, int locationY, int speedX, int sppedY, int hp, int shootNum)
+    + getScore(): int
+    + getProp(): List<BaseProp>
+    + shoot():List<BaseBullet>
+    + response(): void
+}
+
+AbstractAircraft <|-- EliteEnemy
+
+class ElitePlusEnemy {
+    + ElitePlusEnemy(int locationX, int locationY, int speedX, int sppedY, int hp, int shootNum)
+    + getScore(): int
+    + getProp(): List<BaseProp>
+    + shoot():List<BaseBullet>
+    + response(): void
+}
+
+AbstractAircraft <|-- ElitePlusEnemy
+
+class BossEnemy {
+    + BossEnemy(int locationX, int locationY, int speedX, int sppedY, int hp, int shootNum)
+    + getScore(): int
+    + getProp(): List<BaseProp>
+    + shoot():List<BaseBullet>
+}
+
+AbstractAircraft <|-- BossEnemy
+
+@enduml

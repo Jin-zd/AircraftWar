@@ -20,16 +20,16 @@ public class NormalGame extends GameTemplate {
     protected void enemyGenerator() {
         Random r = new Random();
         int selectNum = r.nextInt();
-        AircraftFactory aircraftFactory = null;
+        AircraftFactory aircraftFactory;
 
         if (enemyAircrafts.size() < enemyMaxNumber) {
-            if (score % 500 <= 20 && score >= 100 && enemyAircrafts.stream().filter(x -> x instanceof BossEnemy).toList().isEmpty()) {
+            if (score % 500 <= 50 && score >= 100 && enemyAircrafts.stream().filter(x -> x instanceof BossEnemy).toList().isEmpty()) {
                 aircraftFactory = new BossEnemyFactory();
                 enemyAircrafts.add(aircraftFactory.createAircraft(20, bossHp));
                 isBoss = true;
                 bossBgmOn();
             }
-            noBossEnemyGenerator(selectNum, aircraftFactory);
+            noBossEnemyGenerator(selectNum);
         }
     }
 
@@ -47,7 +47,13 @@ public class NormalGame extends GameTemplate {
         } else {
             aircraftCycleDuration = 200;
         }
+        if (shootCycleDuration - 20 > 200) {
+            shootCycleDuration -= 20;
+        } else {
+            shootCycleDuration = 200;
+        }
         double aircraftCycle = (double) aircraftCycleDuration / timeInterval;
-        System.out.printf("难度增加！敌机生命累积提升倍率：%.3f；精英机生成概率：%.2f；敌机生成周期：%.2f。\n",rate, eliteProbability, aircraftCycle);
+        double shootCycle = (double) shootCycleDuration / timeInterval;
+        System.out.printf("难度增加！敌机生命累积提升倍率：%.3f；精英机生成概率：%.2f；敌机生成周期：%.2f；射击周期：%.2f.\n", rate, eliteProbability, aircraftCycle, shootCycle);
     }
 }
