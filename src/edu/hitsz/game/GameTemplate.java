@@ -411,7 +411,7 @@ public abstract class GameTemplate extends JPanel {
                         Runnable superPropThread = () -> {
                             try {
                                 heroAircraft.changeStrategy(new RingShootStrategy(heroAircraft), 20);
-                                Thread.sleep(10000);
+                                Thread.sleep(5000);
                                 heroAircraft.changeStrategy(new StraightShootStrategy(heroAircraft), 1);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
@@ -424,7 +424,7 @@ public abstract class GameTemplate extends JPanel {
                         Runnable powerPropThread = () -> {
                             try {
                                 heroAircraft.changeStrategy(new ScatterShootStrategy(heroAircraft), 3);
-                                Thread.sleep(10000);
+                                Thread.sleep(5000);
                                 heroAircraft.changeStrategy(new StraightShootStrategy(heroAircraft), 1);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
